@@ -58,13 +58,24 @@ android {
             } else {
                 // Fall back to debug signing locally
                 signingConfig = signingConfigs.getByName("debug")
-
-                // Fail on CI if secrets are missing
-                if (System.getenv("CI") == "true") {
-                    throw GradleException("Release build on CI requires signing configuration")
-                }
             }
         }
+    }
+
+    // Add task to verify signing config exists when building release
+    tasks.register("verifyReleaseSigningConfig") {
+        doLast {
+            val releaseStoreFile =
+                findProperty("RELEASE_STORE_FILE") as String?
+                    ?: System.getenv("RELEASE_STORE_FILE")
+            if (System.getenv("CI") == "true" && releaseStoreFile == null) {
+                throw GradleException("Release build on CI requires signing configuration")
+            }
+        }
+    }
+
+    tasks.named("assembleRelease") {
+        dependsOn("verifyReleaseSigningConfig")
     }
 
     compileOptions {

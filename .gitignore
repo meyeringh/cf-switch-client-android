@@ -45,6 +45,8 @@ render.experimental.xml
 *.jks
 *.keystore
 release.keystore
+release.keystore.base64
+GITHUB_SECRETS.txt
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
