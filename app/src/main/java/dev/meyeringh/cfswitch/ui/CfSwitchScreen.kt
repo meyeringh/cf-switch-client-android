@@ -58,8 +58,8 @@ fun CfSwitchScreen(
     var showSettings by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    // Check if settings are configured on first launch
-    LaunchedEffect(Unit) {
+    // Check if settings are configured and load state when viewModel changes
+    LaunchedEffect(viewModel) {
         val baseUrl = preferences.getString("base_url", "") ?: ""
         val token = preferences.getString("api_token", "") ?: ""
         if (baseUrl.isEmpty() || token.isEmpty()) {
@@ -89,8 +89,8 @@ fun CfSwitchScreen(
             preferences = preferences,
             onDismiss = { showSettings = false },
             onSaved = {
+                showSettings = false
                 onSettingsSaved()
-                viewModel.loadState()
             }
         )
     }
